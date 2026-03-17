@@ -1,0 +1,5 @@
+icalendar
+pandas
+openpyxl
+streamlit
+matplotlib
