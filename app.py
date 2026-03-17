@@ -4,6 +4,8 @@ from stats import *
 from export import *
 import os
 
+os.makedirs("data", exist_ok=True)
+
 st.title("Analyse des Calendrier - ADE")
 
 # Fichiers déjà présents dans data/
@@ -42,12 +44,20 @@ st.dataframe(df[cols_affichees])
 
 with st.sidebar:
     st.header("📥 Export Excel")
-    if st.button("Exporter en Excel"):
-        os.makedirs("export", exist_ok=True)
-        nom_export = os.path.splitext(os.path.basename(fichier if isinstance(fichier, str) else fichier.name))[0] + "_stats.xlsx"
-        chemin_export = os.path.join("export", nom_export)
-        exporter_excel(df, chemin_export)
-        st.success(f"Exporté : {chemin_export}")
+
+    import io
+    buffer = io.BytesIO()
+    exporter_excel(df, buffer)
+    buffer.seek(0)
+    nom_export = os.path.splitext(os.path.basename(fichier if isinstance(fichier, str) else fichier.name))[
+                     0] + "_stats.xlsx"
+
+    st.download_button(
+        label="Télécharger l'Excel",
+        data=buffer,
+        file_name=nom_export,
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
 st.header("📋 Résumé global")
 st.dataframe(resume_global(df))
