@@ -1,5 +1,5 @@
-import pandas as pd
 from stats import *
+import pandas as pd
 
 def exporter_excel(df, chemin_sortie):
     with pd.ExcelWriter(chemin_sortie, engine="openpyxl") as writer:
