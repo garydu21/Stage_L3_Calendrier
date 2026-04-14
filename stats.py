@@ -90,3 +90,31 @@ def resume_global(df):
         "Période du":             str(df["date"].min()),
         "Période au":             str(df["date"].max()),
     }]).T.rename(columns={0: "Valeur"}).astype(str)
+
+
+def heures_etudiant_modele(df):
+    def est_pour_etudiant(row):
+        summary = row["summary_raw"].upper()
+        type_s  = row["type_seance"]
+
+        if type_s == "CM":
+            return True
+        elif type_s == "TD":
+            return "GROUPE-01" in summary.replace(" ", "-") or "GROUPE-1 " in summary
+        elif type_s == "TP":
+            return "GROUPE-A" in summary.replace(" ", "-")
+        return False
+
+    df_etudiant = df[df["is_cours"] == True].copy()
+    df_etudiant = df_etudiant[df_etudiant.apply(est_pour_etudiant, axis=1)]
+
+    result = df_etudiant.groupby("matiere").agg(
+        types_seance = ("type_seance", lambda x: ", ".join(sorted(x.unique()))),
+        nb_seances   = ("duree_h", "count"),
+        heures_total = ("duree_h", "sum")
+    ).sort_values("heures_total", ascending=False)
+
+    # Ligne total
+    result.loc["TOTAL"] = ["", result["nb_seances"].sum(), result["heures_total"].sum()]
+
+    return result
