@@ -91,6 +91,8 @@ def resume_global(df):
         "Période au":             str(df["date"].max()),
     }]).T.rename(columns={0: "Valeur"}).astype(str)
 
+def est_fichier_filiere(df):
+    return df[df["is_cours"] == True]["filiere"].nunique() <= 3
 
 def heures_etudiant_modele(df):
     def est_pour_etudiant(row):
