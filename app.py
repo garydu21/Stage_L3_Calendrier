@@ -62,8 +62,9 @@ with st.sidebar:
 st.header("📋 Résumé global")
 st.dataframe(resume_global(df))
 
-st.header("🎓 Étudiant modèle (Groupe-01 TD / Groupe-A TP)")
-st.dataframe(heures_etudiant_modele(df))
+if est_fichier_filiere(df):
+    st.header("🎓 Étudiant modèle (Groupe-01 TD / Groupe-A TP)")
+    st.dataframe(heures_etudiant_modele(df))
 
 st.header("📊 Stats par prof")
 st.dataframe(stats_par_prof(df))
