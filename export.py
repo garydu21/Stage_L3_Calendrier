@@ -5,6 +5,7 @@ def exporter_excel(df, chemin_sortie):
     with pd.ExcelWriter(chemin_sortie, engine="openpyxl") as writer:
         df.to_excel(writer, sheet_name="Données brutes")
         resume_global(df).to_excel(writer, sheet_name="Résumé")
+        heures_etudiant_modele(df).to_excel(writer, sheet_name="Étudiant modèle")
         stats_par_prof(df).to_excel(writer, sheet_name="Par prof")
         stats_par_filiere(df).to_excel(writer, sheet_name="Par filière")
         heures_par_mois(df).to_excel(writer, sheet_name="Par mois")
