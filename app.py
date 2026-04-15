@@ -63,8 +63,9 @@ st.header("📋 Résumé global")
 st.dataframe(resume_global(df))
 
 if est_fichier_filiere(df):
-    st.header("🎓 Étudiant modèle (Groupe-01 TD / Groupe-A TP)")
-    st.dataframe(heures_etudiant_modele(df))
+    result, groupe_td, groupe_tp = heures_etudiant_modele(df)
+    st.header(f"🎓 Étudiant modèle (Groupe-{groupe_td} TD / Groupe-{groupe_tp} TP)")
+    st.dataframe(result)
 
 st.header("📊 Stats par prof")
 st.dataframe(stats_par_prof(df))

@@ -6,7 +6,8 @@ def exporter_excel(df, chemin_sortie):
         df.to_excel(writer, sheet_name="Données brutes")
         resume_global(df).to_excel(writer, sheet_name="Résumé")
         if est_fichier_filiere(df):
-            heures_etudiant_modele(df).to_excel(writer, sheet_name="Étudiant modèle")
+            result, _, _ = heures_etudiant_modele(df)
+            result.to_excel(writer, sheet_name="Étudiant modèle")
         stats_par_prof(df).to_excel(writer, sheet_name="Par prof")
         stats_par_filiere(df).to_excel(writer, sheet_name="Par filière")
         heures_par_mois(df).to_excel(writer, sheet_name="Par mois")

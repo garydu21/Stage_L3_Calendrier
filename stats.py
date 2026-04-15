@@ -1,3 +1,5 @@
+import re
+
 import pandas as pd
 
 def creer_dataframe(evenements):
@@ -95,6 +97,32 @@ def est_fichier_filiere(df):
     return df[df["is_cours"] == True]["filiere"].nunique() <= 3
 
 def heures_etudiant_modele(df):
+    cours = df[df["is_cours"] == True]
+
+    # Trouve le premier groupe TD disponible
+    groupe_td = "01"
+    for s in cours[cours["type_seance"] == "TD"]["summary_raw"]:
+        m = re.search(r"Groupe[-\s](\d+)", s, re.IGNORECASE)
+        if m:
+            groupe_td = m.group(1).zfill(2)  # "1" → "01"
+            break
+
+    # Trouve le premier groupe TP disponible
+    groupe_tp = "A"
+    for s in cours[cours["type_seance"] == "TP"]["summary_raw"]:
+        m = re.search(r"Groupe[-\s]([A-Z])", s, re.IGNORECASE)
+        if m:
+            groupe_tp = m.group(1).upper()
+            break
+
+    # Trouve le premier groupe anglais disponible
+    groupe_anglais = None
+    for s in cours[cours["filiere"] == "Anglais"]["summary_raw"]:
+        m = re.search(r"Groupe-(\d+)", s, re.IGNORECASE)
+        if m:
+            groupe_anglais = m.group(1)
+            break
+
     def est_pour_etudiant(row):
         summary = row["summary_raw"].upper()
         type_s  = row["type_seance"]
@@ -102,12 +130,14 @@ def heures_etudiant_modele(df):
         if type_s == "CM":
             return True
         elif type_s == "TD":
-            return "GROUPE-01" in summary.replace(" ", "-") or "GROUPE-1 " in summary
+            if "LV" in summary and groupe_anglais:
+                return f"GROUPE-{groupe_anglais}" in summary.replace(" ", "-")
+            return f"GROUPE-{groupe_td}" in summary.replace(" ", "-")
         elif type_s == "TP":
-            return "GROUPE-A" in summary.replace(" ", "-")
+            return f"GROUPE-{groupe_tp}" in summary.replace(" ", "-")
         return False
 
-    df_etudiant = df[df["is_cours"] == True].copy()
+    df_etudiant = cours.copy()
     df_etudiant = df_etudiant[df_etudiant.apply(est_pour_etudiant, axis=1)]
 
     result = df_etudiant.groupby("matiere").agg(
@@ -116,7 +146,7 @@ def heures_etudiant_modele(df):
         heures_total = ("duree_h", "sum")
     ).sort_values("heures_total", ascending=False)
 
-    # Ligne total
     result.loc["TOTAL"] = ["", result["nb_seances"].sum(), result["heures_total"].sum()]
 
-    return result
+    return result, groupe_td, groupe_tp
+
