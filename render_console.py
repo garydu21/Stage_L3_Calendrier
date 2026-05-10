@@ -8,11 +8,14 @@ FILIERES = {
     "SV":  "Sciences de la Vie",
     "PC":  "Physique-Chimie",
     "PSY": "Psychologie",
-    "ALL": "Lettres / Arts",
-    "LET": "Lettres",
-    "L":   "Anglais",
+    "ALL": "",
+    "LET": "",
+    "L":   "",
     "ECO": "Économie",
-    "AGIL": "Gestion de projet",
+    "AGIL": "",
+    "SHS":  "",
+    "EEA":  "",
+    "VEU":  "",
 }
 
 def file_path():

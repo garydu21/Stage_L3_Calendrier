@@ -98,4 +98,3 @@ st.bar_chart(heures_par_filiere(df))
 
 st.subheader("Heures par mois")
 st.dataframe(heures_par_mois(df))
-st.bar_chart(heures_par_mois(df))
