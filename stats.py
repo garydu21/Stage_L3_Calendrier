@@ -153,3 +153,16 @@ def heures_etudiant_modele(df):
 
     return result, groupe_td, groupe_tp
 
+def get_filieres_uniques(df):
+    cours = df[df["is_cours"] == True]
+    return sorted(cours["filiere_code"].unique().tolist())
+
+def heures_par_departement(df, associations):
+    cours = df[df["is_cours"] == True].copy()
+    cours["departement"] = cours["filiere_code"].map(associations).fillna("Non classé")
+    return cours.groupby("departement")["duree_h"].sum().sort_values(ascending=False)
+
+def enseignants_par_departement(df, associations):
+    cours = df[df["is_cours"] == True].copy()
+    cours["departement"] = cours["filiere_code"].map(associations).fillna("Non classé")
+    return cours.groupby("departement")["prof"].nunique().sort_values(ascending=False)

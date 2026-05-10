@@ -66,7 +66,8 @@ def init(file_path):
                 break
 
         match = re.search(r"-([A-Z]+)\d", str(event.get("SUMMARY")))
-        filiere = FILIERES.get(match.group(1), match.group(1)) if match else "Inconnue"
+        filiere_code = match.group(1) if match else "?"
+        filiere = FILIERES.get(filiere_code, filiere_code) if match else "Inconnue"
 
         match_type = re.match(r"^(CM|TD|TP|DS|CC)", str(event.get("SUMMARY")))
         type_seance = match_type.group(1) if match_type else "Autre"
@@ -83,6 +84,7 @@ def init(file_path):
                 "salle": str(event.get("LOCATION")),
                 "matiere": matiere,
                 "prof":    prof,
+                "filiere_code": filiere_code,
                 "filiere": filiere,
                 "type_seance": type_seance,
                 "is_cours": is_cours,
