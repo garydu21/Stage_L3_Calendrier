@@ -82,6 +82,8 @@ def repartition_type_par_filiere(df, cours_seulement=True):
 def resume_global(df):
     cours = df[df["is_cours"] == True]
 
+    nb_semaines = pd.to_datetime(cours["date"]).dt.isocalendar().week.nunique()
+
     return pd.DataFrame([{
         "Total séances":          len(df),
         "Total cours":            len(cours),
@@ -89,6 +91,7 @@ def resume_global(df):
         "Total heures cours":     cours["duree_h"].sum(),
         "Nombre de profs":        cours["prof"].nunique(),
         "Nombre de filières":     cours["filiere"].nunique(),
+        "Nombre de semaines":     nb_semaines,
         "Période du":             str(df["date"].min()),
         "Période au":             str(df["date"].max()),
     }]).T.rename(columns={0: "Valeur"}).astype(str)
